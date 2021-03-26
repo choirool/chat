@@ -24,7 +24,7 @@ class ChatServiceProvider extends ServiceProvider
         $this->publishConfig();
 
         if (config('musonza_chat.should_load_routes')) {
-            require __DIR__.'/Http/routes.php';
+            require __DIR__ . '/Http/routes.php';
         }
     }
 
@@ -58,8 +58,14 @@ class ChatServiceProvider extends ServiceProvider
     public function publishMigrations()
     {
         $timestamp = date('Y_m_d_His', time());
-        $stub = __DIR__.'/../database/migrations/create_chat_tables.php';
-        $target = $this->app->databasePath().'/migrations/'.$timestamp.'_create_chat_tables.php';
+        $stub = __DIR__ . '/../database/migrations/create_chat_tables.php';
+        $target = $this->app->databasePath() . '/migrations/' . $timestamp . '_create_chat_tables.php';
+
+        $this->publishes([$stub => $target], 'chat.migrations');
+
+        $timestamp = date('Y_m_d_His', time());
+        $stub = __DIR__ . '/../database/migrations/add_deleted_at_on_messages_and_conversation_table.php';
+        $target = $this->app->databasePath() . '/migrations/' . $timestamp . '_add_deleted_at_on_messages_and_conversation_table.php';
 
         $this->publishes([$stub => $target], 'chat.migrations');
     }
@@ -72,7 +78,7 @@ class ChatServiceProvider extends ServiceProvider
     public function publishConfig()
     {
         $this->publishes([
-            __DIR__.'/../config' => config_path(),
+            __DIR__ . '/../config' => config_path(),
         ], 'chat.config');
     }
 }

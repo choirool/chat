@@ -15,6 +15,8 @@ class ConversationService
     use SetsParticipants;
     use Paginates;
     protected $filters = [];
+    protected $withTrush = false;
+    protected $onlyTrush = false;
 
     /**
      * @var Conversation
@@ -41,6 +43,19 @@ class ConversationService
     {
         $this->conversation = $conversation;
 
+        return $this;
+    }
+
+    public function withTrush()
+    {
+        $this->withTrush = true;
+        return $this;
+    }
+
+    public function onlyTrush()
+    {
+        $this->withTrush = true;
+        $this->onlyTrush = true;
         return $this;
     }
 
@@ -110,6 +125,8 @@ class ConversationService
             'page'      => $this->page,
             'pageName'  => 'page',
             'filters'   => $this->filters,
+            'with_trush' => $this->withTrush,
+            'only_trush' => $this->onlyTrush,
         ]);
     }
 
