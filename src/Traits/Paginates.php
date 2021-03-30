@@ -10,6 +10,7 @@ trait Paginates
     protected $columns = ['*'];
     protected $pageName = 'page';
     protected $deleted = false;
+    protected $withDeleted = false;
 
     /**
      * Set the limit.
@@ -49,6 +50,13 @@ trait Paginates
     public function deleted()
     {
         $this->deleted = true;
+
+        return $this;
+    }
+
+    public function withDeleted()
+    {
+        $this->withDeleted = true;
 
         return $this;
     }

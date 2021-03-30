@@ -13,7 +13,7 @@ use Musonza\Chat\Eventing\MessageWasSent;
 
 class Message extends BaseModel
 {
-    use EventGenerator, SoftDeletes;
+    use EventGenerator;
 
     protected $fillable = [
         'body',

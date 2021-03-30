@@ -69,7 +69,12 @@ class ConversationService
      */
     public function getMessages()
     {
-        return $this->conversation->getMessages($this->participant, $this->getPaginationParams(), $this->deleted);
+        return $this->conversation->getMessages(
+            $this->participant,
+            $this->getPaginationParams(),
+            $this->deleted,
+            $this->withDeleted
+        );
     }
 
     /**
