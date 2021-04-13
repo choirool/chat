@@ -68,6 +68,12 @@ class ChatServiceProvider extends ServiceProvider
         $target = $this->app->databasePath() . '/migrations/' . $timestamp . '_add_deleted_at_on_messages_and_conversation_table.php';
 
         $this->publishes([$stub => $target], 'chat.migrations');
+
+        $timestamp = date('Y_m_d_His', time());
+        $stub = __DIR__ . '/../database/migrations/create_conversation_and_message_status_table.php';
+        $target = $this->app->databasePath() . '/migrations/' . $timestamp . '_create_conversation_and_message_status_table.php';
+
+        $this->publishes([$stub => $target], 'chat.migrations');
     }
 
     /**
