@@ -86,6 +86,14 @@ class ConversationService
     }
 
     /**
+     * Clears conversation.
+     */
+    public function trush()
+    {
+        $this->conversation->trush($this->participant);
+    }
+
+    /**
      * Mark all messages in Conversation as read.
      *
      * @return void

@@ -55,6 +55,11 @@ class Conversation extends BaseModel
         return $this->participants()->get()->pluck('messageable');
     }
 
+    public function deletedConversation()
+    {
+        return $this->hasOne(ConversationDeleted::class, 'conversation_id', 'id');
+    }
+
     /**
      * Return the recent message in a Conversation.
      *
@@ -381,11 +386,35 @@ class Conversation extends BaseModel
         }
 
         if (!$options['with_trush']) {
-            $paginator->whereNull('c.deleted_at');
+            // dd($participant);
+            // $paginator->whereNull('c.deleted_at');
+            $paginator->whereDoesntHave('conversation.deletedConversation', function ($query) use ($participant) {
+                $query->whereRaw('`c`.`id` = `conversation_id`')
+                    ->whereHas('participant', function ($query) use ($participant) {
+                        $query->where([
+                            'messageable_id' => $participant->getKey(),
+                            'messageable_type' => $participant->getMorphClass(),
+                        ]);
+                    });
+            });
         }
 
         if ($options['only_trush']) {
-            $paginator->whereNotNull('c.deleted_at');
+            // $paginator->whereNotNull('c.deleted_at');
+            // $paginator->join($this->tablePrefix . 'conversations_deleted as c_d', function ($join) {
+            //     $join->on($this->tablePrefix . 'participation.id', '=', 'c_d.participation_id')
+            //         ->whereRaw('`c`.`id` = `c_d`.`conversation_id`');
+            // });
+
+            $paginator->whereHas('conversation.deletedConversation', function ($query) use ($participant) {
+                $query->whereRaw('`c`.`id` = `conversation_id`')
+                    ->whereHas('participant', function ($query) use ($participant) {
+                        $query->where([
+                            'messageable_id' => $participant->getKey(),
+                            'messageable_type' => $participant->getMorphClass(),
+                        ]);
+                    });
+            });
         }
 
         return $paginator
@@ -412,6 +441,23 @@ class Conversation extends BaseModel
         }
 
         return $notifications->get();
+    }
+
+    public function trush(Model $participant)
+    {
+        $participation = Participation::where([
+            'conversation_id' => $this->getKey(),
+            'messageable_id' => $participant->getKey(),
+            'messageable_type' => $participant->getMorphClass(),
+        ])->first();
+
+        ConversationDeleted::updateOrCreate([
+            'conversation_id' => $this->getKey(),
+            'participation_id' => $participation->getKey(),
+        ], [
+            'conversation_id' => $this->getKey(),
+            'participation_id' => $participation->getKey(),
+        ]);
     }
 
     private function clearConversation($participant): void
