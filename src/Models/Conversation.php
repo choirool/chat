@@ -385,6 +385,12 @@ class Conversation extends BaseModel
             $paginator = $paginator->where('c.direct_message', (bool) $options['filters']['direct_message']);
         }
 
+        if (isset($options['filters']['keyword']) && $options['filters']['keyword'] !== '') {
+            $paginator->whereHas('conversation.messages', function ($query) use ($options) {
+                $query->where('body', 'like', "%{$options['filters']['keyword']}%");
+            });
+        }
+
         if (!$options['with_trush']) {
             // dd($participant);
             // $paginator->whereNull('c.deleted_at');
