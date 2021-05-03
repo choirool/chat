@@ -221,6 +221,13 @@ class ConversationService
         return $this;
     }
 
+    public function searchByKeyword($keyword = '')
+    {
+        $this->filters['keyword'] = $keyword;
+
+        return $this;
+    }
+
     public function getParticipation($participant = null)
     {
         $participant = $participant ?? $this->participant;
