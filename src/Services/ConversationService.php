@@ -228,6 +228,15 @@ class ConversationService
         return $this;
     }
 
+    public function filterReadStatus($readStatus = null)
+    {
+        if ($readStatus !== null) {
+            $this->filters['read_status'] = $readStatus;
+        }
+
+        return $this;
+    }
+
     public function getParticipation($participant = null)
     {
         $participant = $participant ?? $this->participant;

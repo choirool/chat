@@ -391,6 +391,15 @@ class Conversation extends BaseModel
             });
         }
 
+        if (isset($options['filters']['read_status']) && in_array($options['filters']['read_status'], [0, 1])) {
+            $paginator = $paginator->whereHas('conversation.messages', function ($query) use ($participant, $options) {
+                $query->join($this->tablePrefix . 'message_notifications', $this->tablePrefix . 'message_notifications.message_id', '=', $this->tablePrefix . 'messages.id')
+                    ->where($this->tablePrefix . 'message_notifications.messageable_id', $participant->getKey())
+                    ->where($this->tablePrefix . 'message_notifications.messageable_type', $participant->getMorphClass())
+                    ->where($this->tablePrefix . 'message_notifications.is_seen', $options['filters']['read_status']);
+            });
+        }
+
         if (!$options['with_trush']) {
             // dd($participant);
             // $paginator->whereNull('c.deleted_at');
