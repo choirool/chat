@@ -386,8 +386,17 @@ class Conversation extends BaseModel
         }
 
         if (isset($options['filters']['keyword']) && $options['filters']['keyword'] !== '') {
-            $paginator->whereHas('conversation.messages', function ($query) use ($options) {
-                $query->where('body', 'like', "%{$options['filters']['keyword']}%");
+            $paginator->where(function ($query) use ($participant, $options) {
+                $query->whereHas('conversation.messages', function ($query) use ($options) {
+                    $query->where('body', 'like', "%{$options['filters']['keyword']}%");
+                })
+                    ->orWhereHas('conversation.participants.messageable', function ($query) use ($participant, $options) {
+                        $query->where(function ($query) use ($options) {
+                            $query->where('firstname', 'like', "%{$options['filters']['keyword']}%")
+                                ->orWhere('lastname', 'like', "%{$options['filters']['keyword']}%");
+                        })
+                            ->where('messageable_id', '<>', $participant->id);
+                    });
             });
         }
 
