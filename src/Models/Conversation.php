@@ -391,11 +391,11 @@ class Conversation extends BaseModel
                     $query->where('body', 'like', "%{$options['filters']['keyword']}%");
                 })
                     ->orWhereHas('conversation.participants.messageable', function ($query) use ($participant, $options) {
-                        $query->where(function ($query) use ($options) {
-                            $query->where('firstname', 'like', "%{$options['filters']['keyword']}%")
-                                ->orWhere('lastname', 'like', "%{$options['filters']['keyword']}%");
-                        })
-                            ->where('messageable_id', '<>', $participant->id);
+                        $query->where('messageable_id', '<>', $participant->id)
+                            ->where(function ($query) use ($options) {
+                                $query->where('firstname', 'like', "%{$options['filters']['keyword']}%")
+                                    ->orWhere('lastname', 'like', "%{$options['filters']['keyword']}%");
+                            });
                     });
             });
         }
