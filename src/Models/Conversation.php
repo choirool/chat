@@ -396,7 +396,7 @@ class Conversation extends BaseModel
                                 $keywords = explode(' ', $options['filters']['keyword']);
 
                                 foreach ($keywords as $keyword) {
-                                    $query->where('firstname', 'like', "%{$keyword}%")
+                                    $query->orWhere('firstname', 'like', "%{$keyword}%")
                                         ->orWhere('lastname', 'like', "%{$keyword}%");
                                 }
                             });
